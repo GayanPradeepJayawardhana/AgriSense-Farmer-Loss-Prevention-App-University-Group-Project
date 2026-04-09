@@ -4,12 +4,15 @@ import cors from 'cors';
 import morgan from 'morgan';
 import connectDB from './config/db.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+import dns from "node:dns"
 
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import weatherRoutes from './routes/weatherRoutes.js';
 import chatbotRoutes from './routes/chatbotRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+
+dns.setServers(["1.1.1.1"],["8.8.8.8"]);
 
 dotenv.config();
 connectDB();

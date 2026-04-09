@@ -30,13 +30,19 @@ export const getUserNotifications = asyncHandler(async (req, res) => {
 
   // Find notifications that target this user or are broadcast (targetUsers empty)
   const notifications = await Notification.find({
-    $or: [
-      { targetUsers: user._id },
-      { targetUsers: { $size: 0 } },
-    ],
-    $or: [
-      { expiresAt: { $exists: false } },
-      { expiresAt: { $gt: now } },
+    $and: [
+      {
+        $or: [
+          { targetUsers: user._id },
+          { targetUsers: { $size: 0 } },
+        ],
+      },
+      {
+        $or: [
+          { expiresAt: { $exists: false } },
+          { expiresAt: { $gt: now } },
+        ],
+      },
     ],
   })
     .sort({ createdAt: -1 })

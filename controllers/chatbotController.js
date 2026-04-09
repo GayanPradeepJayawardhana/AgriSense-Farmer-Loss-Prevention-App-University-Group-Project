@@ -21,13 +21,11 @@ export const chatWithAssistant = asyncHandler(async (req, res) => {
 
   try {
     const aiResponse = await askGemini(message, context);
-
     await ChatMessage.create({
       userId: user._id,
       message,
       response: aiResponse,
     });
-
     res.json({ response: aiResponse });
   } catch (error) {
     res.status(500);
