@@ -28,8 +28,9 @@ export const chatWithAssistant = asyncHandler(async (req, res) => {
     });
     res.json({ response: aiResponse });
   } catch (error) {
+    console.error('Chatbot Error:', error);
     res.status(500);
-    throw new Error('AI service error: ' + error.message);
+    throw new Error(`AI service error: ${error.message}`);
   }
 });
 
