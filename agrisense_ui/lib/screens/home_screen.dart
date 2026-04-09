@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'profile_screen.dart';
+import 'settings_screen.dart';
+import 'weather_screen.dart';
+import 'chatbot_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,283 +17,22 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // The Stack keeps the Nav Bar floating ON TOP of whatever screen is currently active
       body: Stack(
         children: [
-          // 1. Full Screen Background Image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/onboardingBG.png',
-              fit: BoxFit.cover,
-            ),
+          // 1. The Active Screen Manager (The Deck of Cards)
+          IndexedStack(
+            index: _selectedIndex,
+            children: [
+              _buildDashboardView(), // Index 0: Home
+              const ChatbotScreen(), // Index 1: Chatbot
+              const WeatherScreen(), // Index 2: Weather
+              const ProfileScreen(), // Index 3: Profile
+              const SettingsScreen(), // Index 4: Settings
+            ],
           ),
 
-          // 2. Main Layout (Fixed Top Bar + Scrollable Content)
-          SafeArea(
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
-
-                // --- FIXED TOP APP BAR ---
-                // This stays at the top and never scrolls
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Notification Icon
-                      IconButton(
-                        onPressed: () {
-                          print("Notifications clicked");
-                        },
-                        padding: EdgeInsets.zero,
-                        constraints:
-                            const BoxConstraints(), // Removes default extra padding
-                        icon: const Icon(
-                          Icons.notifications_none,
-                          color: Colors.white,
-                          size: 28,
-                        ),
-                      ),
-
-                      // Profile Icon
-                      GestureDetector(
-                        onTap: () {
-                          print("Profile clicked");
-                        },
-                        child: const CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 18,
-                          child: Icon(
-                            Icons.person_outline,
-                            color: Color(0xFF0B2B1D),
-                            size: 22,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // --- SCROLLABLE MAIN CONTENT ---
-                // This area will scroll if the phone is too small to fit everything
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Greeting
-                          const Text(
-                            'Hi Eshan,',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Inter',
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Keep your field operations running smoothly.',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                              fontFamily: 'Inter',
-                            ),
-                          ),
-
-                          const SizedBox(height: 30),
-
-                          // Weather Cards Row
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildWeatherCard(
-                                  "SUN",
-                                  Icons.cloud_outlined,
-                                  "16°",
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: _buildWeatherCard(
-                                  "MON",
-                                  Icons.water_drop_outlined,
-                                  "17°",
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: _buildWeatherCard(
-                                  "THU",
-                                  Icons.thunderstorm_outlined,
-                                  "18°",
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: _buildWeatherCard(
-                                  "WED",
-                                  Icons.cloudy_snowing,
-                                  "19°",
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 30),
-
-                          // Ask AI Banner
-                          GestureDetector(
-                            onTap: () {
-                              print("Ask AI clicked");
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(24),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(24),
-                                gradient: const LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Color(0xFFE8F5E9),
-                                    Color(0xFFA5D6A7),
-                                  ],
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Need Expert Advice?",
-                                    style: TextStyle(
-                                      color: Color(0xFF081C15),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: 'Inter',
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    "Detect risks early and protect your yield",
-                                    style: TextStyle(
-                                      color: Color(0xFF081C15),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Inter',
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: const [
-                                      Text(
-                                        "Ask AI",
-                                        style: TextStyle(
-                                          color: Color(0xFF081C15),
-                                          fontSize: 36,
-                                          fontWeight: FontWeight.w400,
-                                          fontFamily: 'Inter',
-                                        ),
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward,
-                                        color: Color(0xFF081C15),
-                                        size: 28,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // Your AI Insights Section
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(24),
-                              gradient: const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [Color(0xFFE8F5E9), Color(0xFFA5D6A7)],
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "Your AI Insights",
-                                  style: TextStyle(
-                                    color: Color(0xFF081C15),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Inter',
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                const Text(
-                                  "Revisit past diagnoses and field recommendations",
-                                  style: TextStyle(
-                                    color: Color(0xFF081C15),
-                                    fontSize: 12,
-                                    fontFamily: 'Inter',
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-
-                                // Insights List
-                                // shrinkWrap tells the list to take exactly as much space as it needs
-                                // NeverScrollableScrollPhysics ensures it scrolls smoothly with the rest of the page
-                                ListView(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.zero,
-                                  children: [
-                                    _buildInsightTile(
-                                      "yellow leaves on rice plants",
-                                      "Usually indicates nitrogen deficiency or overwatering...",
-                                    ),
-                                    const SizedBox(height: 10),
-                                    _buildInsightTile(
-                                      "rice blast fungus signs in seedlings",
-                                      "White or gray lesions with dark borders on leaves. Controlled with ...",
-                                    ),
-                                    const SizedBox(height: 10),
-                                    _buildInsightTile(
-                                      "white streaks on rice leaves disease",
-                                      "Could be rice tungro virus. Managed by controlling vector insects...",
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // This massive empty box acts as a spacer at the very bottom
-                          // It ensures the user can scroll the lowest card up and clear the floating nav bar!
-                          const SizedBox(height: 120),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // 3. Floating Bottom Navigation Bar (Fixed in place)
+          // 2. Floating Bottom Navigation Bar (Fixed in place over everything)
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -325,11 +68,291 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // --- DASHBOARD VIEW (Your Home Screen UI) ---
+  Widget _buildDashboardView() {
+    return Stack(
+      children: [
+        // 1. Full Screen Background Image (Only for the Dashboard)
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/onboardingBG.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+
+        // 2. Main Layout (Fixed Top Bar + Scrollable Content)
+        SafeArea(
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+
+              // --- FIXED TOP APP BAR ---
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Notification Icon
+                    IconButton(
+                      onPressed: () {
+                        print("Notifications clicked");
+                      },
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      icon: const Icon(
+                        Icons.notifications_none,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+
+                    // Profile Icon
+                    GestureDetector(
+                      onTap: () {
+                        // Switch to Profile Tab programmatically
+                        setState(() {
+                          _selectedIndex = 3;
+                        });
+                      },
+                      child: const CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 18,
+                        child: Icon(
+                          Icons.person_outline,
+                          color: Color(0xFF0B2B1D),
+                          size: 22,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // --- SCROLLABLE MAIN CONTENT ---
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Greeting
+                        const Text(
+                          'Hi Eshan,',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Inter',
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Keep your field operations running smoothly.',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontFamily: 'Inter',
+                          ),
+                        ),
+
+                        const SizedBox(height: 30),
+
+                        // Weather Cards Row
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildWeatherCard(
+                                "SUN",
+                                Icons.cloud_outlined,
+                                "16°",
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _buildWeatherCard(
+                                "MON",
+                                Icons.water_drop_outlined,
+                                "17°",
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _buildWeatherCard(
+                                "THU",
+                                Icons.thunderstorm_outlined,
+                                "18°",
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _buildWeatherCard(
+                                "WED",
+                                Icons.cloudy_snowing,
+                                "19°",
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 30),
+
+                        // Ask AI Banner
+                        GestureDetector(
+                          onTap: () {
+                            // Switch to Chatbot Tab programmatically
+                            setState(() {
+                              _selectedIndex = 1;
+                            });
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(24),
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Color(0xFFE8F5E9), Color(0xFFA5D6A7)],
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Need Expert Advice?",
+                                  style: TextStyle(
+                                    color: Color(0xFF081C15),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Inter',
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  "Detect risks early and protect your yield",
+                                  style: TextStyle(
+                                    color: Color(0xFF081C15),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Inter',
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: const [
+                                    Text(
+                                      "Ask AI",
+                                      style: TextStyle(
+                                        color: Color(0xFF081C15),
+                                        fontSize: 36,
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: 'Inter',
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward,
+                                      color: Color(0xFF081C15),
+                                      size: 28,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Your AI Insights Section
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFFE8F5E9), Color(0xFFA5D6A7)],
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Your AI Insights",
+                                style: TextStyle(
+                                  color: Color(0xFF081C15),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Inter',
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                "Revisit past diagnoses and field recommendations",
+                                style: TextStyle(
+                                  color: Color(0xFF081C15),
+                                  fontSize: 12,
+                                  fontFamily: 'Inter',
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+
+                              ListView(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                padding: EdgeInsets.zero,
+                                children: [
+                                  _buildInsightTile(
+                                    "yellow leaves on rice plants",
+                                    "Usually indicates nitrogen deficiency or overwatering...",
+                                  ),
+                                  const SizedBox(height: 10),
+                                  _buildInsightTile(
+                                    "rice blast fungus signs in seedlings",
+                                    "White or gray lesions with dark borders on leaves. Controlled with ...",
+                                  ),
+                                  const SizedBox(height: 10),
+                                  _buildInsightTile(
+                                    "white streaks on rice leaves disease",
+                                    "Could be rice tungro virus. Managed by controlling vector insects...",
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Spacer to ensure content scrolls above the nav bar
+                        const SizedBox(height: 120),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   // --- HELPER WIDGETS ---
 
   Widget _buildWeatherCard(String day, IconData icon, String temp) {
     return GestureDetector(
-      onTap: () => print("$day Weather clicked"),
+      onTap: () {
+        // Switch to Weather Tab programmatically
+        setState(() => _selectedIndex = 2);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
@@ -420,7 +443,6 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _selectedIndex = index;
         });
-        print("Navigated to tab $index");
       },
       behavior: HitTestBehavior.opaque,
       child: Container(
